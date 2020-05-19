@@ -11,14 +11,14 @@
 #include <QString>
 #include <QFile>
 #include <QVector>
-
+#include <QtMath> // M_PI
 
 
 
 //function est la fonction de n variables à intégrer
 double function(std::vector<double>& x)
 {
-    return x[1]*sin(x[1]);  // y*y
+    return x[0];
 }
 
 //Permet de resize et de remplir deux vecteurs, x_min et x_max
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     //          QString(argv[1]));
 
     x_min.push_back(0);
-    x_max.push_back(8);
+    x_max.push_back(1);
 
 
     //on doit faire ça pour mettre à jour le champs "dimension"
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     //testEDOIntegrator->IntegreEDO(function,
     //                              TestMonteCarloIntegrator);
 
-    GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(x_min[0], x_max[0], 0.005, y_0);
+    GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(x_min[0], x_max[0], 0.05, y_0);
     test_genedo->IntegreGeneralEDO(function, TestMonteCarloIntegrator);
     test_genedo->makePlot(customPlot);
 

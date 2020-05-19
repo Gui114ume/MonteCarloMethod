@@ -87,7 +87,7 @@ double MonteCarloIntegrator::ComputeIntegrale(double (*function)(std::vector<dou
 
     omp_set_num_threads(4);
     #pragma omp parallel for reduction(+:resultat)
-    for(int i = 0 ; i < 10000 ; i++)
+    for(int i = 0 ; i < 100000 ; i++)
     {
         for(unsigned int j = 0 ; j < this->dimension  ; j++)
         {
@@ -100,8 +100,8 @@ double MonteCarloIntegrator::ComputeIntegrale(double (*function)(std::vector<dou
     {
         resultat *= (x_max[i] - x_min[i]);
     }
-    resultat *= 0.0001;
-
+    resultat *= 0.00001;
+    //std :: cout << resultat << std::endl;
     return resultat;
 }
 
@@ -115,7 +115,7 @@ double MonteCarloIntegrator::ComputeIntegrale(double (*function)(std::vector<dou
 
     omp_set_num_threads(4);
     #pragma omp parallel for reduction(+:resultat)
-    for(int i = 0 ; i < 10000 ; i++)
+    for(int i = 0 ; i < 100000 ; i++)
     {
         for(unsigned int j = 1 ; j < this->dimension + 1 ; j++)
         {
@@ -128,7 +128,7 @@ double MonteCarloIntegrator::ComputeIntegrale(double (*function)(std::vector<dou
     {
         resultat *= (x_max[i] - x_min[i]);
     }
-    resultat *= 0.0001;
+    resultat *= 0.00001;
 
     return resultat;
 }
@@ -144,7 +144,7 @@ std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(doub
 
     omp_set_num_threads(4);
     #pragma omp parallel for reduction(+:resultat) reduction(+:variance)
-    for(unsigned int i = 0 ; i < 10000 ; i++)
+    for(unsigned int i = 0 ; i < 100000 ; i++)
     {
         for(unsigned int j = 0 ; j < this->dimension ; j++)
         {
@@ -163,8 +163,8 @@ std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(doub
         variance *= (x_max[i] - x_min[i]) * (x_max[i] - x_min[i]);
     }
 
-    resultat *= 0.0001;
-    variance *= 0.0001;
+    resultat *= 0.00001;
+    variance *= 0.00001;
 
     variance -= resultat*resultat;
 
@@ -187,7 +187,7 @@ std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(doub
 
     omp_set_num_threads(4);
     #pragma omp parallel for reduction(+:resultat) reduction(+:variance)
-    for(unsigned int i = 0 ; i < 10000 ; i++)
+    for(unsigned int i = 0 ; i < 100000 ; i++)
     {
         for(unsigned int j = 1 ; j < this->dimension + 1; j++)
         {
@@ -206,8 +206,8 @@ std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(doub
         variance *= (x_max[i] - x_min[i]) * (x_max[i] - x_min[i]);
     }
 
-    resultat *= 0.0001;
-    variance *= 0.0001;
+    resultat *= 0.00001;
+    variance *= 0.00001;
 
     variance -= resultat*resultat;
 
