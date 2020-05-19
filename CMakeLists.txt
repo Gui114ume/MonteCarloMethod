@@ -11,6 +11,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set( SOURCES
+    main.cpp
+    qcustomplot.cpp
+    mainwindow.cpp
+    )
+
+set(UIS
+    mainwindow.ui)
+
+set( MOC_HEADERS
+    mainwindow.h
+    GeneralEDOMonteCarloIntegrator.hpp
+    IMonteCarloIntegrator.hpp
+    qcustomplot.hpp
+    YIndependantedoMonteCarloIntegrator.hpp
+    MonteCarloIntegrator.hpp)
+
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check http://doc.qt.io/qt-5/deployment-android.html for more information.
 # They need to be set before the find_package(Qt5 ...) call.
@@ -27,14 +44,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS PrintSupport REQUIRED)
 
+QT5_WRAP_UI(UI_HEADERS ${UIS})
+
 if(ANDROID)
   add_library(IntegrationMC SHARED
     main.cpp
   )
 else()
   add_executable(IntegrationMC
-    main.cpp
-    qcustomplot.cpp
+      ${SOURCES}
+      ${UI_HEADERS}
   )
 endif()
 

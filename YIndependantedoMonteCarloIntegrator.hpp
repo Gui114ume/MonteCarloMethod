@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 
+#include "qcustomplot.h"
 #include "IMonteCarloIntegrator.hpp"
 
 //La classe EDOMonteCarloIntegrator permet d'intégrer certaines EDO qui peuvent s'écrire sous la forme suivant :
@@ -57,6 +58,26 @@ public:
 
             std::cout << resultat << std::endl;
         }
+    }
+
+    void makePlot(QCustomPlot* QCP)
+    {
+        QVector<double> y = QVector<double>::fromStdVector(this->EDOSolution);
+        QVector<double> x;
+        for(int i = 0 ; i < y.size() ; i++)
+            x.push_back(this->MinIntervalleDIntegration[0] + i * this->EcartEntreValeur);
+
+        QCP->addGraph();
+        QCP->graph(0)->setData(x, y);
+        // give the axes some labels:
+        QCP->xAxis->setLabel("x");
+        QCP->yAxis->setLabel("y");
+        // set axes ranges, so we see all data:
+        QCP->xAxis->setRange(this->MinIntervalleDIntegration[0], this->MaxIntervalleDIntegration[0]);
+        QCP->yAxis->setRange(0, 1);//il faudrait connnaitre y_min et y_max
+        QCP->rescaleAxes();
+        QCP->resize(400,400);
+        QCP->replot();
     }
 
 private:

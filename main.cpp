@@ -2,10 +2,15 @@
 #include "YIndependantedoMonteCarloIntegrator.hpp"
 #include "GeneralEDOMonteCarloIntegrator.hpp"
 
+#include <QApplication>
+
+#include "mainwindow.h"
+#include "qcustomplot.h"
 
 #include <QtDebug>
 #include <QString>
 #include <QFile>
+#include <QVector>
 
 
 
@@ -13,7 +18,7 @@
 //function est la fonction de n variables à intégrer
 double function(std::vector<double>& x)
 {
-    return x[0];
+    return x[1]*sin(x[1]);  // y*y
 }
 
 //Permet de resize et de remplir deux vecteurs, x_min et x_max
@@ -56,10 +61,16 @@ void SetBornes(std::vector<double>& x_min,
 
 int main(int argc, char *argv[])
 {
+    QApplication app(argc, argv);
+    MainWindow* win = new MainWindow();
+    QCustomPlot *customPlot = new QCustomPlot(win);
+    //trop petit sur la mainwindow, il faut reussir à l'agrandir.
+
+    win->show();
 
     std::vector<double> x_min;
     std::vector<double> x_max;
-
+    double y_0 = 1;
     //utilisation de reference pour des questions de non-recopie
     auto& ref_x_min = x_min;
     auto& ref_x_max = x_max;
@@ -74,7 +85,8 @@ int main(int argc, char *argv[])
     //          QString(argv[1]));
 
     x_min.push_back(0);
-    x_max.push_back(1);
+    x_max.push_back(8);
+
 
     //on doit faire ça pour mettre à jour le champs "dimension"
     MonteCarloIntegrator* TestMonteCarloIntegrator = new MonteCarloIntegrator(ref_x_min,
@@ -92,11 +104,13 @@ int main(int argc, char *argv[])
     //testEDOIntegrator->IntegreEDO(function,
     //                              TestMonteCarloIntegrator);
 
-    GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(0, 1, 0.001, 1);
-
+    GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(x_min[0], x_max[0], 0.005, y_0);
     test_genedo->IntegreGeneralEDO(function, TestMonteCarloIntegrator);
+    test_genedo->makePlot(customPlot);
+
 
     delete test_genedo;
     delete TestMonteCarloIntegrator;
-    //delete testEDOIntegrator;
+
+    return app.exec();
 }
