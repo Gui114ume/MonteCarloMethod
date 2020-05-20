@@ -25,6 +25,11 @@ public:
                                     std::vector<double>& x_min,
                                     std::vector<double>& x_max)  = 0;
 
+    virtual std::vector<double> ComputeIntegrale(std::vector<double(*)(std::vector<double>&)> function,
+                                    std::vector<double> y,
+                                    std::vector<double>& x_min,
+                                    std::vector<double>& x_max)  = 0;
+
     virtual std::pair<double, double> ComputeIntegraleAndVariance(double (*function)(std::vector<double>&),
                                                                   std::vector<double>& x_min,
                                                                   std::vector<double>& x_max) = 0;
@@ -33,6 +38,7 @@ public:
                                                                   double y,
                                                                   std::vector<double>& x_min,
                                                                   std::vector<double>& x_max) = 0;
+
 
     virtual void SetDistributionParameter(std::vector<double>& min,
                                           std::vector<double>& max) = 0;

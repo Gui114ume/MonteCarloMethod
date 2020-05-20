@@ -1,6 +1,7 @@
 #include "MonteCarloIntegrator.hpp"
 #include "YIndependantedoMonteCarloIntegrator.hpp"
 #include "GeneralEDOMonteCarloIntegrator.hpp"
+#include "couplededosysmontecarlointegrator.hpp"
 
 #include <QApplication>
 
@@ -18,7 +19,12 @@
 //function est la fonction de n variables à intégrer
 double function(std::vector<double>& x)
 {
-    return x[0];
+    return -sin(x[2]);
+}
+
+double function2(std::vector<double>& x)
+{
+    return cos(x[2]);
 }
 
 //Permet de resize et de remplir deux vecteurs, x_min et x_max
@@ -70,7 +76,9 @@ int main(int argc, char *argv[])
 
     std::vector<double> x_min;
     std::vector<double> x_max;
-    double y_0 = 1;
+    std::vector<double> y_0;
+    y_0.push_back(1);
+    y_0.push_back(0);
     //utilisation de reference pour des questions de non-recopie
     auto& ref_x_min = x_min;
     auto& ref_x_max = x_max;
@@ -85,7 +93,7 @@ int main(int argc, char *argv[])
     //          QString(argv[1]));
 
     x_min.push_back(0);
-    x_max.push_back(1);
+    x_max.push_back(9);
 
 
     //on doit faire ça pour mettre à jour le champs "dimension"
@@ -104,13 +112,22 @@ int main(int argc, char *argv[])
     //testEDOIntegrator->IntegreEDO(function,
     //                              TestMonteCarloIntegrator);
 
-    GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(x_min[0], x_max[0], 0.05, y_0);
-    test_genedo->IntegreGeneralEDO(function, TestMonteCarloIntegrator);
-    test_genedo->makePlot(customPlot);
+    //GeneralEDOMonteCarloIntegrator* test_genedo = new GeneralEDOMonteCarloIntegrator(x_min[0], x_max[0], 0.05, y_0);
+    //test_genedo->IntegreGeneralEDO(function, TestMonteCarloIntegrator);
+    //test_genedo->makePlot(customPlot);
+    std::vector<double (*)(std::vector<double>&)> vfunction;
+    vfunction.push_back(function);
+    vfunction.push_back(function2);
 
 
-    delete test_genedo;
+    CoupledEDOSysMonteCarloIntegrator* test_general = new CoupledEDOSysMonteCarloIntegrator(x_min[0],x_max[0],0.05,y_0);
+    test_general->IntegreCoupledEDO(vfunction, TestMonteCarloIntegrator);
+    test_general->makePlot(customPlot);
+
+    //delete test_genedo;
+    delete test_general;
     delete TestMonteCarloIntegrator;
+    //delete customPlot;
 
     return app.exec();
 }

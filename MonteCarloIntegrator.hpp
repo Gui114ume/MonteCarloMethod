@@ -53,6 +53,11 @@ public:
                                     std::vector<double>& x_min,
                                     std::vector<double>& x_max)  override;
 
+    virtual std::vector<double> ComputeIntegrale(std::vector<double(*)(std::vector<double>&)> function,
+                                    std::vector<double> y,
+                                    std::vector<double>& x_min,
+                                    std::vector<double>& x_max)  override;
+
     virtual std::pair<double, double> ComputeIntegraleAndVariance(double (*function)(std::vector<double>&),
                                                                   std::vector<double>& x_min,
                                                                   std::vector<double>& x_max) override;
@@ -61,6 +66,7 @@ public:
                                                                   double y,
                                                                   std::vector<double>& x_min,
                                                                   std::vector<double>& x_max) override;
+
 private:
     //On a besoin d'un vecteur de generator, pour s'assurer que les nombres aleatoires ne se repetent pas, et qu'il n'y ait pas de race condition
     //D'après les test ça marche quand meme cependant ...
@@ -132,6 +138,44 @@ double MonteCarloIntegrator::ComputeIntegrale(double (*function)(std::vector<dou
 
     return resultat;
 }
+
+std::vector<double> MonteCarloIntegrator::ComputeIntegrale(std::vector<double (*)(std::vector<double>&)> function, std::vector<double> y, std::vector<double> &x_min, std::vector<double> &x_max)
+{
+    std::vector<double> resultat(y.size());
+
+    std::vector<double> random_value;
+    random_value.resize(this->dimension + y.size());
+    for(unsigned int i = 0 ; i < y.size() ; i++)
+    {
+        random_value[i] = y[i];
+    }
+
+    //omp_set_num_threads(4);
+    //#pragma omp parallel for reduction(+:resultat)
+    for(int i = 0 ; i < 100000 ; i++)
+    {
+        for(unsigned int j = y.size() ; j < this->dimension + y.size() ; j++)
+        {
+            random_value[j] = this->distribution[0](this->generator);
+        }
+        for(unsigned int j = 0 ; j < resultat.size() ; j++)
+        {
+            double tmp = 0;
+            tmp = function[j](random_value);
+            resultat[j] += tmp;
+        }
+    }
+
+    for(unsigned int i = 0 ; i < resultat.size() ; i++)
+    {
+        resultat[i] *= (x_max[0] - x_min[0]);
+        resultat[i] *= 0.00001;
+    }
+
+
+    return resultat;
+}
+
 
 std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(double (*function)(std::vector<double> &), std::vector<double> &x_min, std::vector<double> &x_max)
 {
@@ -217,5 +261,6 @@ std::pair<double, double> MonteCarloIntegrator::ComputeIntegraleAndVariance(doub
     //                            max = resultat + ( (1.96 * sqrt(variance))/ sqrt(10000))
     return res_pair;
 }
+
 
 #endif

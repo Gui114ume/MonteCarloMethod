@@ -26,7 +26,8 @@ set( MOC_HEADERS
     IMonteCarloIntegrator.hpp
     qcustomplot.hpp
     YIndependantedoMonteCarloIntegrator.hpp
-    MonteCarloIntegrator.hpp)
+    MonteCarloIntegrator.hpp
+    couplededosysmontecarlointegrator.hpp)
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check http://doc.qt.io/qt-5/deployment-android.html for more information.
